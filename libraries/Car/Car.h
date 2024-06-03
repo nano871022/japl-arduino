@@ -5,47 +5,48 @@
 #define Car_h
 
 #include "String.h"
-#include <MotorPwmOut.h>
 #include <RFRx.h>
+#include <VoltageCheck.h>
+#include <Leds.h>
+#include <CarRFRx.h>
+#include <Logs.h>
+#include <MoveCar.h>
+
 
 class Car{
 	public:
-		Car(uint8_t da_Left,uint8_t da_fLeft,uint8_t da_bLeft,uint8_t da_Right, uint8_t da_fRight,uint8_t da_bRight,uint8_t portRH,uint8_t d_l_red,uint8_t d_l_blue,uint8_t d_l_green);
+		Car(uint8_t da_Left,uint8_t da_fLeft,uint8_t da_bLeft,uint8_t da_Right, uint8_t da_fRight,uint8_t da_bRight,uint8_t portRH,uint8_t d_l_red,uint8_t d_l_blue,uint8_t d_l_green,uint8_t a_v_read1,uint8_t d_l1_red,uint8_t d_l1_blue,uint8_t d_l1_green,uint8_t a_v_read2,uint8_t d_l2_red,uint8_t d_l2_blue,uint8_t d_l2_green, uint8_t d_l13);
 		void begin(int baud);
-		void move(float x, float y);
-		void stop();
 		void loop();
 		void logs(bool enable = false);
 	private:
-		RFRx *rfRx;
-		bool _enableLog = false;
-		MotorPwmOut* motorLeft;
-		MotorPwmOut* motorRight;
-		uint8_t _d_f_Left;
-		uint8_t _d_f_Right;
-		uint8_t _d_b_Left;
-		uint8_t _d_b_Right;
-		uint8_t _d_l_red;
-		uint8_t _d_l_blue;
-		uint8_t _d_l_green;
-		uint8_t _x = 0;
-		uint8_t _y = 0;
-		bool isUp(float value);
+		VoltageCheck* _vCheck1;
+		VoltageCheck* _vCheck2; 
+
+		uint8_t _step = 0;
 		
-		float getValue(float value);
-		float moveX(float x);
-		float moveY(float y);
-		uint8_t getPlusValues(float a, float b);
-		uint8_t getMinusValues(float a, float b);
-		uint8_t minPowerMotor = 85;
-		void forward();
-		void backward();
-		void log(char* msg);
-		
+		Leds *_led_red;
+		Leds *_led_blue;
+		Leds *_led_green;
+		Leds *_led1_red;
+		Leds *_led1_blue;
+		Leds *_led1_green;
+		Leds *_led2_red;
+		Leds *_led2_blue;
+		Leds *_led2_green;
+		Leds *_led13;
+
+		Logs *_log;
+		CarRFRx *_rf;
+		MoveCar *_move;
+		bool _enable_log = false;
+
+		bool isUp(uint8_t value);
 		void ledsLow();
-		uint8_t getX(String msg);
-		uint8_t getY(String msg);
-		String get(String msg,uint8_t first, uint8_t second);
+		void ledOn(Leds *led,bool on);
+		void voltageCheck();
+		void defaultOption();
+		void stepsCount();
 };
 
 #endif
