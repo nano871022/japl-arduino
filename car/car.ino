@@ -7,7 +7,7 @@ uint8_t aWR = 5;
 
 uint8_t dFWL = 7;
 uint8_t dFWR = 3;
-uint8_t dBWL = 8;
+uint8_t dBWL = 12;
 uint8_t dBWR = 4;
 
 uint8_t l1Red = 2;

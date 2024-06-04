@@ -13,7 +13,7 @@ Car::Car(uint8_t da_Left,uint8_t da_fLeft,uint8_t da_bLeft,uint8_t da_Right, uin
 	this->_led_blue = new Leds(d_l_blue);
 	this->_led_green = new Leds(d_l_green);
 
-	this->_rf = new CarRFRx(portRH,this->_led_blue,this->_log);
+	this->_rf = new CarRFRx(portRH,this->_led_blue,this->_led_green,this->_log);
 
 	this->_led1_red = new Leds(d_l1_red);
 	this->_led1_blue = new Leds(d_l1_blue);
@@ -29,14 +29,14 @@ Car::Car(uint8_t da_Left,uint8_t da_fLeft,uint8_t da_bLeft,uint8_t da_Right, uin
 
 	this->_vCheck1 = new VoltageCheck(a_v_read1,_led1_red,_led1_blue,_led1_green,this->_log);
 	this->_vCheck1->setPwmEq5v(245);
-	this->_vCheck1->setVoltageGood(7.2);
-	this->_vCheck1->setVoltageWarning(6.8);
-	this->_vCheck1->setVoltageAlert(6.6);
+	this->_vCheck1->setVoltageGood(3.7);
+	this->_vCheck1->setVoltageWarning(3.5);
+	this->_vCheck1->setVoltageAlert(3.3);
 	this->_vCheck2 = new VoltageCheck(a_v_read2,_led2_red,_led2_blue,_led2_green,this->_log);
 	this->_vCheck2->setPwmEq5v(245);
-	this->_vCheck2->setVoltageGood(3.7);
-	this->_vCheck2->setVoltageWarning(3.5);
-	this->_vCheck2->setVoltageAlert(3.3);
+	this->_vCheck2->setVoltageGood(7.2);
+	this->_vCheck2->setVoltageWarning(6.8);
+	this->_vCheck2->setVoltageAlert(6.6);
 
 }
 
@@ -64,6 +64,9 @@ void Car::begin(int baud){
 
 
 void Car::ledsLow(){
+	if(this->_enable_log){
+		this->_log->log("\nstep 0\n");
+	}
   this->ledOn(this->_led_red,false);
 }
 
@@ -74,9 +77,15 @@ void Car::loop(){
 			this->ledsLow();
 			break;
 		case 1:
+			if(this->_enable_log){
+				this->_log->log("\nstep 1\n");
+			}
 			this->_rf->readRF(); 	
 			break;
 		case 2:
+			if(this->_enable_log){
+				this->_log->log("\nstep 2\n");
+			}
 			this->_move->motor();		
 			break;
 		case 3:
@@ -102,11 +111,17 @@ void Car::stepsCount(){
 }
 
 void Car::defaultOption(){
+	if(this->_enable_log){
+		this->_log->log("\nstep default\n");
+	}
 	this->ledOn(this->_led_red, true);	
 	this->_move->stop();
 }
 
 void Car::voltageCheck(){
+	if(this->_enable_log){
+		this->_log->log("\nstep 3\n");
+	}
 	this->_vCheck1->read();
 	this->_vCheck2->read();
 }

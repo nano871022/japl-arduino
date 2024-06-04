@@ -1,9 +1,12 @@
 #include <CarRFRx.h>
+#define TIME_ADD 800
+#define BLINK_LEVEL 600
 
-CarRFRx::CarRFRx(uint8_t portRH,Leds *ledBlue, Logs *logs){
+CarRFRx::CarRFRx(uint8_t portRH,Leds *ledBlue,Leds *ledGreen, Logs *logs){
 	this->_log = logs;
 	this->_rf = new RFRx(portRH,this->_log);
 	this->_led_blue = ledBlue;
+	this->_led_green = ledGreen;
 }
 
 void CarRFRx::begin(int baund){
@@ -16,7 +19,7 @@ void CarRFRx::readRF(){
 		if(!this->_led_blue->isBlock()){
     		this->_led_blue->on();
     	}
-    	this->_time = millis() + 5000;
+    	this->_time = millis() + TIME_ADD;
     	String value = String(response);
     	this->_x = this->getX(value);
     	this->_y = this->getY(value);
@@ -24,20 +27,32 @@ void CarRFRx::readRF(){
     		sprintf(this->_log->msg,"\nREADRF:: X %04d Y %04d \n",this->_x,this->_y);
     		this->_log->log();
     	}
-    	if(this->getClick(value) == 1){
-    		if(this->_level+1 < 5){
-    			this->_level++;
-    		}else{
-    			this->_level = 0;
-    		}
-    	}
+
     	this->_activeMotor = getActiveMotor(value);
     	
+    	if(this->getClick(value) == 1){
+    		this->calcLevel();
+    	}
     	
     	if(!this->_led_blue->isBlock()){
     		this->_led_blue->on();
     	}
   	}
+}
+
+void CarRFRx::calcLevel(){
+	if(this->_activeMotor){
+		if(this->_level+1 < 5){
+			this->_level++;
+		}else{
+			this->_level = -1;
+		}
+		if(this->_level > 0 && this->_level < 5){
+			this->_led_green->blinks(this->_level,BLINK_LEVEL);
+		}
+	}else{
+		this->_level = -1;
+	}
 }
 
 int CarRFRx::getX(String msg){

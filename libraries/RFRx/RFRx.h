@@ -17,6 +17,7 @@ class RFRx{
 		RH_ASK _askRx;
 		bool _enable = false;
 		Logs *_log;
+
 };
 
 #endif

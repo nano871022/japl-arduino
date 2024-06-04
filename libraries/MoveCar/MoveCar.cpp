@@ -10,7 +10,8 @@ MoveCar::MoveCar(uint8_t da_left, uint8_t da_Right, uint8_t da_fLeft, uint8_t da
 
 	this->motorLeft->setMinPower(this->_minPowerMotor);
 	this->motorRight->setMinPower(this->_minPowerMotor);
-
+	this->motorRight->setReducePower(1.0);
+	this->motorLeft->setReducePower(0.25);
 	this->_d_f_Left = da_fLeft;
 	this->_d_f_Right = da_fRight;
 	this->_d_b_Left = da_bLeft;
@@ -116,9 +117,10 @@ void MoveCar::motor(){
 	if(this->_rf->isWorking()){
   		this->moveMotor();
 	}else{
-		this->_led_red->on();	
+		this->_led1_red->on();	
+		this->_led1_red->on();	
 		this->stop();
-		delay(100);
+	//	delay(100);
 	}
 }
 
@@ -132,7 +134,7 @@ void MoveCar::moveMotor(){
   			this->_log->log();
   		}
   		this->stop();
-   		delay(500);
+   		//delay(50);
    		return;
   	}
 

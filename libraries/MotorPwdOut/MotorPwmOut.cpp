@@ -45,16 +45,17 @@ void MotorPwmOut::setMaxVoltage(float maxVoltage){
 ** Power     : (((254 - 0) / (100 - 0)) X Value) + 105 = 127 PWD
 **/
 void MotorPwmOut::move(uint8_t power){
-	float multiply = 1.0;
+	uint8_t multiply = 100;
 if(this->_state){
 	if(power >= 0 && power <= 100){
 		_currentPower = calcLineal2(power);
 		switch(this->_level){
-			case 0: multiply = 0.5;break;
-			case 1: multiply = 0.6;break;
-			case 2: multiply = 0.7;break;
-			case 3: multiply = 0.8;break;
-			case 4: multiply = 0.9;break;
+			case 0: multiply = 50;break;
+			case 1: multiply = 60;break;
+			case 2: multiply = 70;break;
+			case 3: multiply = 80;break;
+			case 4: multiply = 90;break;
+			default:multiply = 100;break;
 		}
 		
 	}else if(power > 100){
@@ -63,14 +64,22 @@ if(this->_state){
 		_currentPower = _minPowerPwm;
 	}
 
-	//_currentPower = _currentPower * multiply;
+	if(this->_reducePower > 0.0 && this->_reducePower < 1.0){
+		_currentPower = _currentPower - (_currentPower * this->_reducePower);
+	}
+
+	if(multiply > 0 && multiply < 100){
+		_currentPower = _currentPower * (multiply / 100);
+	}
 
 
 	if(power == 0){
 		stop();
-	}else{
-		sprintf(this->_log->msg,"Motor::INF: Origin: %d Power: %d Multiply %d \n\r",power,_currentPower, multiply*10);
-		this->_log->log();
+	}else {
+		if(this->_enable_log){
+			sprintf(this->_log->msg,"Motor::INF: Origin: %d Power: %d Multiply %d \n\r",power,_currentPower, multiply);
+			this->_log->log();
+		}
 		analogWrite(_aPort,_currentPower);
 	}
 }
@@ -92,7 +101,7 @@ uint8_t MotorPwmOut::calcLineal(uint8_t power){
 	return map(power,0,100,80,254);	
 }
 uint8_t MotorPwmOut::calcLineal2(uint8_t power){
-	return (252 / 99) * (power-1); 
+	return 1.54545 * (power-1) + 100; 
 }
 uint8_t MotorPwmOut::calcLowPowL1(uint8_t power){
 	return (pow(power ,2.5) * 0.00099) + 85;
@@ -111,4 +120,8 @@ void MotorPwmOut::on(){
 }
 void MotorPwmOut::off(){
 	this->_state = false;
+}
+
+void MotorPwmOut::setReducePower(float reducePower){
+	this->_reducePower = reducePower;
 }

@@ -8,7 +8,7 @@
 
 class CarRFRx {
 	public:
-		CarRFRx(uint8_t portRH,Leds *ledBlue, Logs *logs);
+		CarRFRx(uint8_t portRH,Leds *ledBlue,Leds *ledGreen, Logs *logs);
 		void readRF();
 		int getX();
 		int getY();
@@ -22,10 +22,11 @@ class CarRFRx {
 	private:
 		RFRx *_rf;
 		Leds *_led_blue;
+		Leds *_led_green;
 		Logs *_log;
-		bool _enable_log = true;
+		bool _enable_log = false;
 		bool _activeMotor = false;
-		uint8_t _level = 0;
+		uint8_t _level = -1;
 		int _x = 0;
 		int _y = 0;
 		unsigned long _time = 0;
@@ -34,6 +35,7 @@ class CarRFRx {
 		bool getActiveMotor(String msg);
 		uint8_t getClick(String msg);
 		String get(String msg,uint8_t first, uint8_t second);
+		void calcLevel();
 		
 
 };

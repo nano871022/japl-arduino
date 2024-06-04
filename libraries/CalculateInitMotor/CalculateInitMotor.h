@@ -7,7 +7,7 @@
 class CalculateInitMotor{
 	private:
 		Logs *_log;
-		bool _enable = true;
+		bool _enable = false;
 		uint8_t getValue(int value);
 	public:
 		CalculateInitMotor(Logs *log);

@@ -20,7 +20,7 @@ class MoveCar{
 		uint8_t _d_b_Left;
 		uint8_t _d_b_Right;
 
-		bool _enable_log = true;
+		bool _enable_log = false;
 
 		Leds *_led1_red;
 		Leds *_led1_blue;

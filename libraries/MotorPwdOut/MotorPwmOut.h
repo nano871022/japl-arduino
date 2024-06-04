@@ -12,6 +12,7 @@ class MotorPwmOut{
 		void setMinPower(uint8_t minPowerPwm);
 		void setMaxVoltage(float maxVoltage);
 		void setLevel(uint8_t level);
+		void setReducePower(float reducePower);
 		void move(uint8_t power);
 		void stop();
 		double power();
@@ -20,11 +21,13 @@ class MotorPwmOut{
 	private:
 		Logs *_log;
 		bool _state = false;
+		bool _enable_log = true;
 	    uint8_t _aPort;
 		uint8_t _minPowerPwm = 0;
 		const uint8_t _maxPowerPwm = 225;
 		uint8_t _currentPower;
 		float _maxVoltage = 5.0;
+		float _reducePower = 1.0;
 		uint8_t _level = 0;
 		uint8_t calcLineal(uint8_t power);
 		uint8_t calcLineal2(uint8_t power);
